@@ -10,25 +10,33 @@ class BSONSocketConnection(object):
     host = None
     port = None
 
-    def __init__(self, host, port):
+    def __init__(self, host=None, port=None, socket_address=None):
         self.host = host
         self.port = port
+        self.socket_address = socket_address
+        t = socket.AF_INET
+        if host is None:
+            t = socket.AF_UNIX
+        self.socket = socket.socket(t, socket.SOCK_STREAM)
 
     def connect(self):
-        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.socket.connect((self.host, self.port))
+        if self.host is None:
+            self.socket.connect(self.socket_address)
+        else:
+            self.socket.connect((self.host, self.port))
 
     def close(self):
         self.socket.close()
 
     def send(self, data):
-        d = bson.BSON.encode(data)
+        d = bson.dumps(data)
         self.socket.send(d)
         print 'sent type: %s, data: %r, length: %d' % (type(d), d, len(d))
 
 
 if __name__ == '__main__':
-    conn = BSONSocketConnection('localhost', 1337)
+    #conn = BSONSocketConnection(host='localhost', port=1337)
+    conn = BSONSocketConnection(socket_address='/tmp/whatever.sock')
     conn.connect()
-    conn.send({'message': 'hello yo'})
-    #conn.close()
+    conn.send({'text': 'hello', 'issent': True})
+    conn.close()
