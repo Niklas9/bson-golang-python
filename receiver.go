@@ -33,7 +33,7 @@ func handleClient(conn net.Conn) {
         log.Println("errored on decoding, ", err2)
     }
     log.Printf("Msg received: %+v\n", msg)
-    log.Printf("encoded: %v\n", buf[:reqLen])
+    log.Printf("encoded: %+v\n", buf[:reqLen])
     if msg.IsSent {
         log.Printf("OMG OMG OMG ! It's true!\n")
     } else {
@@ -73,7 +73,11 @@ func main() {
         return
     }
     defer ln.Close()
-    log.Println("listning on :1337")
+    if CONN_TYPE == "unix" {
+        log.Printf("listening on %s\n", CONN_SOCK_FILE)
+    } else {
+        log.Println("listning on :%d", CONN_PORT)
+    }
     conns := clientConns(ln)
     for {
         go handleClient(<-conns)
