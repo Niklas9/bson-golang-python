@@ -18,6 +18,7 @@ class BSONSocketConnection(object):
         if host is None:
             t = socket.AF_UNIX
         self.socket = socket.socket(t, socket.SOCK_STREAM)
+        bson.patch_socket()  # brings native bson encoding/decoding to socket
 
     def connect(self):
         if self.host is None:
@@ -29,8 +30,8 @@ class BSONSocketConnection(object):
         self.socket.close()
 
     def send(self, data):
+        self.socket.sendobj(data)
         d = bson.dumps(data)
-        self.socket.send(d)
         print 'sent type: %s, data: %r, length: %d' % (type(d), d, len(d))
 
 
