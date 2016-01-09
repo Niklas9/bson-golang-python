@@ -13,3 +13,18 @@ BSON is the default format for MongoDB though, both for client-server
 communication but also for storage - which means that if the received BSON
 can be trusted we can quite safely just forward it to a MongoDB connection
 without any deserialization etc.
+
+Getting started
+---------------
+Run the setup script, which will get necessary BSON dependencies for Go and
+Python
+
+    ./setup.sh
+
+Compile the Go program by
+
+    go build receiver.go
+
+Run the Python program "sender.py" in another terminal and see what happens :)
+
+    python sender.py
